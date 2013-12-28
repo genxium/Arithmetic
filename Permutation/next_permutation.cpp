@@ -1,8 +1,12 @@
 /*
-1. Find the largest index k such that a[k] < a[k + 1]. If no such index exists, the permutation is the last permutation.
-2. Find the largest index l such that a[k] < a[l]. Since k + 1 is such an index, l is well defined and satisfies k < l.
-3. Swap a[k] with a[l].
-4. Reverse the sequence from a[k + 1] up to and including the final element a[n].
+
+Next permutation of a[0, ..., n-1]
+
+1. Find the largest index k such that a[k] < a[k+1]. If no such index exists, the permutation is the last permutation.
+2. Find the largest index l such that a[k] < a[l] where l>k.
+3. Swap a[k] and a[l].
+4. Reverse the sequence a[k+1, ..., n-1]
+
 */
 
 string next_permutation(string str){
