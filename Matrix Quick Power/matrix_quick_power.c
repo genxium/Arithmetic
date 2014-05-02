@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <string.h>
-#include <iostream>
-using namespace std;
+#include "matrix_quick_power.h"
 
 const long MAXN=351;
 const long MOD=1000000007;
-
-int *multiplier, *mix_multiplier, *final_multiplier, *tmp_mat;
 
 void multiply(int* obj_1, int* obj_2,  int sz, int* ret){
 	int i,j,k; long long tmp;
@@ -21,7 +18,7 @@ void multiply(int* obj_1, int* obj_2,  int sz, int* ret){
 }
 
 void mat_pow(int* M, int sz, long r, int* ret){
-
+    int* tmp_mat=(int*)malloc(sz*sz*sizeof(int));
 	memset(ret, 0, sz*sz*sizeof(int));
 	for(int i=0;i<sz;i++) ret[i*sz+i]=1;
 	while(r){
@@ -33,6 +30,7 @@ void mat_pow(int* M, int sz, long r, int* ret){
 		memcpy(M, tmp_mat, sz*sz*sizeof(int));
 		r>>=1;
 	}
+    free(tmp_mat);
 }
 
 void disp(int* mat, int sz){
