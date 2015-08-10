@@ -3,7 +3,7 @@
 #include <cstring>
 
 #define EXPRESSION 0
-#define TOKEN 1
+#define FACTOR 1
 
 int readInt(char* s, int& len, int &cur) {
 	int ret = 0;
@@ -21,7 +21,7 @@ int eval(char* s, int &len, int &cur, int priority) {
 	switch (priority) {
 		case EXPRESSION:
 			while (cur < len) {
-				int tmp = eval(s, len, cur, TOKEN);	
+				int tmp = eval(s, len, cur, FACTOR);	
 				if (op == '*') ret *= tmp;
 				else if (op == '+') ret += tmp;
 				else if (op == '-') ret -= tmp;
@@ -32,7 +32,7 @@ int eval(char* s, int &len, int &cur, int priority) {
 				op = s[cur++]; 
 			}
 		break;
-		case TOKEN:
+		case FACTOR:
 			ret = 0;
 			if (isdigit(s[cur])) ret = readInt(s, len, cur); 	
 			else {

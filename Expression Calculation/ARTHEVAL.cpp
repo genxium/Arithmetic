@@ -3,8 +3,8 @@
 #include <cstring>
 
 #define EXPRESSION 0
-#define TOKEN 1
-#define OP1 2
+#define FACTOR 1
+#define TERM 2
 
 int readInt(char* s, int& len, int &cur) {
 	int ret = 0;
@@ -22,7 +22,7 @@ int eval(char* s, int &len, int &cur, int priority) {
 	switch (priority) {
 		case EXPRESSION:
 			while (cur < len) {
-				int tmp = eval(s, len, cur, OP1);	
+				int tmp = eval(s, len, cur, TERM);	
 				if (op == '+') ret += tmp;
 				else if (op == '-') ret -= tmp;
 				else ret = tmp; // op == ' '
@@ -32,9 +32,9 @@ int eval(char* s, int &len, int &cur, int priority) {
 				op = s[cur++]; 
 			}
 		break;
-		case OP1:
+		case TERM:
 			while (cur < len) {
-				int tmp = eval(s, len, cur, TOKEN);
+				int tmp = eval(s, len, cur, FACTOR);
 				if (op == '*') ret *= tmp;
 				else ret = tmp; // op == ' '
 				while (s[cur] == ' ') ++cur;
@@ -43,7 +43,7 @@ int eval(char* s, int &len, int &cur, int priority) {
 				op = s[cur++];
 			}
 		break;	
-		case TOKEN:
+		case FACTOR:
 			ret = 0;
 			if (isdigit(s[cur])) ret = readInt(s, len, cur); 	
 			else {
