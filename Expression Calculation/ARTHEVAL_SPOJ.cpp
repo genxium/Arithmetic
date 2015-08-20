@@ -1,46 +1,52 @@
 #include <stdio.h>
-#include <ctype.h>
 #include <cstring>
+#include "eval.h"
 
-#define EXPRESSION 0
-#define FACTOR 1
+#define MX 1024
+#define MOD 1000000007
 
-int readInt(char* s, int& len, int &cur) {
-	int ret = 0;
-	while (cur < len && isdigit(s[cur])) {
-		ret *= 10;
-		ret += (int)(s[cur] - '0');
-		++cur;
-	}
-	return ret;
-}
+static long eval(char** p_s, int priority) {
+	while (*(*p_s) == ' ' && *(*p_s) != '\0') ++(*p_s);
+	if (*(*p_s) == '\0') return 0;
 
-int eval(char* s, int &len, int &cur, int priority) {
-	int ret; char op = ' ';
-	while (s[cur] == ' ') ++cur;
+	long ret;
+	char op = ' ';
+
 	switch (priority) {
-		case EXPRESSION:
-			while (cur < len) {
-				int tmp = eval(s, len, cur, FACTOR);	
-				if (op == '*') ret *= tmp;
-				else if (op == '+') ret += tmp;
-				else if (op == '-') ret -= tmp;
+		case EXPRESSION: {
+			while (*(*p_s) == ' ' && *(*p_s) != '\0') {	
+				long tmp = eval(p_s, FACTOR);	
+
+				if (op == '+') ret = mod_add(ret, tmp, MOD);
+				else if (op == '-') ret = mod_sub(ret, tmp, MOD);
+				else if (op == '*') ret = mod_mul(ret, tmp, MOD);
+				else if (op == '/') ret = prime_mod_div(ret, tmp, MOD);
 				else ret = tmp; // op == ' '
-				while (s[cur] == ' ') ++cur;
-				if (cur == len)	break;
-				if (s[cur] != '+' && s[cur] != '-' && s[cur] != '*') break;
-				op = s[cur++]; 
+
+				while (*(*p_s) == ' ' && *(*p_s) != '\0') ++(*p_s);
+				if (*(*p_s) == '\0') return ret;
+
+				if (*(*p_s) != '+' && *(*p_s) != '-') break;
+				op = *((*p_s)++); 
 			}
-		break;
-		case FACTOR:
-			ret = 0;
-			if (isdigit(s[cur])) ret = readInt(s, len, cur); 	
+		
+			break;
+		}
+		case FACTOR: {
+			int unary_factor = 1;
+			char possible_op = *(*p_s);
+			if (possible_op == '+' || possible_op == '-') ++(*p_s);  
+			if (possible_op == '-') unary_factor = (-1); 
+			if (isdigit(*(*p_s))) ret = read_int(p_s); 	
 			else {
-				++cur; // skip '('
-				ret = eval(s, len, cur, EXPRESSION);
-				++cur; // skip ')'
+				++(*p_s);
+				ret = eval(p_s, EXPRESSION);
+				while (*(*p_s) == ' ' && *(*p_s) != ')') ++(*p_s);
+				++(*p_s);
 			}
-		break;
+			ret *= unary_factor;
+			break;
+		}
 		default:
 			ret = 0;
 		break;
@@ -49,15 +55,12 @@ int eval(char* s, int &len, int &cur, int priority) {
 }
 
 int main() {
-	char s[1024];
-	while (scanf("%s", s) != EOF) {
-		int len = strlen(s);
-		int cur = 0;
-		int result = eval(s, len, cur, EXPRESSION);
-		printf("%d\n", result);
-		bzero(s, sizeof s);	
+	char in_s[MX];
+	while (fgets(in_s, MX, stdin)) {
+		char* s = in_s;
+		long result = eval(&s, EXPRESSION);
+		printf("%ld\n", result);
+		bzero(in_s, sizeof in_s);	
 	}
 	return 0;
 }
-
-

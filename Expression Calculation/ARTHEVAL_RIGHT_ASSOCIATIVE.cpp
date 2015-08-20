@@ -1,57 +1,15 @@
 #include <stdio.h>
-#include <ctype.h>
 #include <cstring>
+#include "eval.h"
 
 #define MX 1024
 #define MOD 1000000007
 
-#define EXPRESSION 0
-#define FACTOR 1
-#define TERM 2
-
-long read_int(char** p_s) {
-	long ret = 0;
-	while (*(*p_s) != '\0' && isdigit(*(*p_s))) {
-		ret *= 10;
-		ret += (long)(*(*p_s) - '0');
-		++(*p_s);
-	}
-	return ret;
-}
-
-long mod_add(long a, long b, long mod) {
-	return (a + b) % mod;
-}
-
-long mod_sub(long a, long b, long mod) {
-	return (a - b + mod) % mod;
-}
-
-long mod_mul(long a, long b, long mod) {
-	return (a * b + mod) % mod;
-}
-
-long mod_pow(long a, long n, long mod) {
-	long ret = 1, tmp = 0;
-	while(n){
-		if(n & 1)	ret = mod_mul(ret, a, mod); 
-		a = mod_mul(a, a, mod);
-		n >>= 1;
-	}
-	return ret;
-}
-
-long prime_mod_div(long a, long b, long mod) {
-	int n = mod - 2;	
-	long tmp =  mod_pow(b, n, mod);
-	return mod_mul(a, tmp, mod);
-}
-
-long eval(char** p_s, int priority) {
+static long eval(char** p_s, int priority) {
 	while (*(*p_s) == ' ' && *(*p_s) != '\0') ++(*p_s);
 	if (*(*p_s) == '\0') return 0;
 
-	int ret;
+	long ret;
 	char op = ' ';
 
 	switch (priority) {
@@ -63,7 +21,7 @@ long eval(char** p_s, int priority) {
 			if (*(*p_s) != '+' && *(*p_s) != '-') break;
 			op = *((*p_s)++); 
 
-			int tmp = eval(p_s, EXPRESSION);	
+			long tmp = eval(p_s, EXPRESSION);	
 			if (op == '+') ret = mod_add(ret, tmp, MOD);
 			else ret = mod_sub(ret, tmp, MOD);
 
@@ -77,13 +35,13 @@ long eval(char** p_s, int priority) {
 			if (*(*p_s) != '*' && *(*p_s) != '/') break;
 			op = *((*p_s)++); 
 
-			int tmp = eval(p_s, TERM);	
+			long tmp = eval(p_s, TERM);	
 			if (op == '*') ret = mod_mul(ret, tmp, MOD);
 			else ret = prime_mod_div(ret, tmp, MOD);
 			break;	
 		}
 		case FACTOR: {
-			int unary_factor = 1;
+			long unary_factor = 1;
 			char possible_op = *(*p_s);
 			if (possible_op == '+' || possible_op == '-') ++(*p_s);  
 			if (possible_op == '-') unary_factor = (-1); 
