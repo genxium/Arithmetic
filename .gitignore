@@ -1,3 +1,6 @@
+# standard test executables
+*test
+
 # Compiled Object files
 *.slo
 *.lo
