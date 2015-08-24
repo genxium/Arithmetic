@@ -14,7 +14,7 @@ static long eval(char** p_s, int priority) {
 
 	switch (priority) {
 		case EXPRESSION: {
-			while (*(*p_s) == ' ' && *(*p_s) != '\0') {	
+			while (*(*p_s) != ' ' && *(*p_s) != '\0') {	
 				long tmp = eval(p_s, TERM);	
 
 				if (op == '+') ret = mod_add(ret, tmp, MOD);
@@ -31,7 +31,7 @@ static long eval(char** p_s, int priority) {
 			break;
 		}
 		case TERM: {
-			while (*(*p_s) == ' ' && *(*p_s) != '\0') {	
+			while (*(*p_s) != ' ' && *(*p_s) != '\0') {	
 				long tmp = eval(p_s, FACTOR);	
 
 				if (op == '*') ret = mod_mul(ret, tmp, MOD);

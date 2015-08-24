@@ -1,5 +1,4 @@
 #include "eval.h"
-#include <ctype.h>
 
 long read_int(char** p_s) {
 	long ret = 0;

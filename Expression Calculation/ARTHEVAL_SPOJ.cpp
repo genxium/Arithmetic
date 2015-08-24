@@ -3,30 +3,28 @@
 #include "eval.h"
 
 #define MX 1024
-#define MOD 1000000007
 
 static long eval(char** p_s, int priority) {
 	while (*(*p_s) == ' ' && *(*p_s) != '\0') ++(*p_s);
-	if (*(*p_s) == '\0') return 0;
+	if (*(*p_s) == '\0')	return 0;
 
 	long ret;
 	char op = ' ';
 
 	switch (priority) {
 		case EXPRESSION: {
-			while (*(*p_s) == ' ' && *(*p_s) != '\0') {	
+			while (*(*p_s) != ' ' && *(*p_s) != '\0') {	
 				long tmp = eval(p_s, FACTOR);	
 
-				if (op == '+') ret = mod_add(ret, tmp, MOD);
-				else if (op == '-') ret = mod_sub(ret, tmp, MOD);
-				else if (op == '*') ret = mod_mul(ret, tmp, MOD);
-				else if (op == '/') ret = prime_mod_div(ret, tmp, MOD);
+				if (op == '+') ret += tmp;
+				else if (op == '-') ret -= tmp;
+				else if (op == '*') ret *= tmp;
 				else ret = tmp; // op == ' '
 
 				while (*(*p_s) == ' ' && *(*p_s) != '\0') ++(*p_s);
-				if (*(*p_s) == '\0') return ret;
+				if (*(*p_s) == '\0')	return ret;
 
-				if (*(*p_s) != '+' && *(*p_s) != '-') break;
+				if (*(*p_s) != '+' && *(*p_s) != '-' && *(*p_s) != '*') break;
 				op = *((*p_s)++); 
 			}
 		
